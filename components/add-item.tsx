@@ -33,6 +33,7 @@ interface KeyboardProps {
 	setOrderedItems: React.Dispatch<React.SetStateAction<Item[]>>;
 	isActive: boolean;
 	setActiveComponent: React.Dispatch<React.SetStateAction<'additem' | 'edit'>>;
+
 }
 
 const Index: React.FC<KeyboardProps> = ({
@@ -40,6 +41,7 @@ const Index: React.FC<KeyboardProps> = ({
 	setOrderedItems,
 	isActive,
 	setActiveComponent,
+	
 }) => {
 	// Custom hook to manage dark mode
 	const { darkModeStatus } = useDarkMode();
@@ -157,6 +159,7 @@ const Index: React.FC<KeyboardProps> = ({
 			console.log('Selected item data:', orderedItems);
 		}
 		setShowPopup(false);
+		setFocusedIndex(-1);
 	};
 
 	// Handle Cancel button click in the popup
@@ -192,7 +195,7 @@ const Index: React.FC<KeyboardProps> = ({
 				if (button) {
 					button.click();
 				}
-			} else {
+			} else if(focusedIndex>=0){
 				handlePopupOpen(focusedIndex);
 			}
 		} else if (event.key === 'ArrowLeft') {

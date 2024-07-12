@@ -10,6 +10,7 @@ import Button from '../bootstrap/Button';
 import { collection, addDoc } from 'firebase/firestore';
 import { firestore, storage } from '../../firebaseConfig';
 import Swal from 'sweetalert2';
+import { NULL } from 'sass';
 
 // Define the props for the CategoryEditModal component
 interface CategoryEditModalProps {
@@ -39,7 +40,7 @@ const CategoryEditModal: FC<CategoryEditModalProps> = ({ id, isOpen, setIsOpen }
 				values.status=true
                 const collectionRef = collection(firestore, 'category');
 				addDoc(collectionRef, values).then(() => {
-                    setIsOpen(false);
+					
 					showNotification(
 						<span className='d-flex align-items-center'>
 							<Icon icon='Info' size='lg' className='me-1' />
@@ -48,6 +49,8 @@ const CategoryEditModal: FC<CategoryEditModalProps> = ({ id, isOpen, setIsOpen }
 						'category has been added successfully',
 					);
 					Swal.fire('Added!', 'category has been add successfully.', 'success');
+				
+					setIsOpen(false);
 				}).catch((error) => {
 					console.error('Error adding document: ', error);
 					alert('An error occurred while adding the document. Please try again later.');

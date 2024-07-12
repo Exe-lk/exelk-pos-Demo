@@ -90,7 +90,7 @@ function index() {
 					showCancelButton: true,
 					confirmButtonColor: '#3085d6',
 					cancelButtonColor: '#d33',
-					confirmButtonText: 'Yes, update it!',
+					confirmButtonText: 'Yes, Print Bill!',
 				});
 
 				if (result.isConfirmed) {
@@ -134,6 +134,7 @@ function index() {
 								.then(() => {
 									Swal.fire(
 										'Added!',
+										
 										'bill has been add successfully.',
 										'success',
 									);
@@ -164,11 +165,13 @@ function index() {
 		}
 	};
 	const handleKeyPress = (event: KeyboardEvent) => {
-		if (event.key.toLowerCase() === 'b') {
+		if (event.ctrlKey && event.key.toLowerCase() === 'b') {
 			setToggleRightPanel((prevState) => !prevState);
-		} else if (event.key.toLowerCase() === 'p') {
+			event.preventDefault(); // Prevent default browser behavior
+		} else if (event.ctrlKey && event.key.toLowerCase() === 'p') {
 			addbill();
-		} else if (event.key === 'Shift') {
+			event.preventDefault(); // Prevent default browser behavior
+		}else if (event.key === 'Shift') {
 			// Check if the focus is on the input fields
 			if (
 				document.activeElement === customerNameInputRef.current ||
@@ -231,6 +234,7 @@ function index() {
 						setOrderedItems={setOrderedItems}
 						isActive={activeComponent === 'additem'}
 						setActiveComponent={setActiveComponent}
+						
 					/>{' '}
 				</div>
 				<div className='col-4 mt-5'>
