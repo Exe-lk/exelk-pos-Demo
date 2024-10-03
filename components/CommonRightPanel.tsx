@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import OffCanvas, { OffCanvasBody } from './bootstrap/OffCanvas';
 import Dropdown, {
@@ -31,6 +31,7 @@ interface Company {
 	email:string
 
 }
+
 const CommonRightPanel: FC<ICommonRightPanel> = ({ setOpen, isOpen, orderedItems,id }) => {
 	const { themeStatus, darkModeStatus } = useDarkMode();
 	const [company, setCompany] = useState<Company>();
@@ -50,6 +51,10 @@ const CommonRightPanel: FC<ICommonRightPanel> = ({ setOpen, isOpen, orderedItems
 		hour: '2-digit',
 		minute: '2-digit',
 	});
+	
+	// Ref for printable content
+	const printRef = useRef<HTMLDivElement>(null);
+
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
@@ -72,6 +77,20 @@ const CommonRightPanel: FC<ICommonRightPanel> = ({ setOpen, isOpen, orderedItems
 		};
 		fetchData();
 	}, []);
+	
+	// Function to handle print
+	const handlePrint = () => {
+		const content = printRef.current;
+		const originalContents = document.body.innerHTML;
+		if (content) {
+			// Set the body content to the content of the print area
+			document.body.innerHTML = content.outerHTML;
+			window.print();
+			// Revert the body content after printing
+			document.body.innerHTML = originalContents;
+		}
+	};
+
 	return (
 		<OffCanvas setOpen={setOpen} isOpen={isOpen} isRightPanel>
 			<OffCanvasBody className='p-4'>
@@ -110,21 +129,24 @@ const CommonRightPanel: FC<ICommonRightPanel> = ({ setOpen, isOpen, orderedItems
 				</div>
 				<div>
 					<div className='d-flex justify-content-end mb-3'>
-						{/* <Button className='btn btn-success w-100' onClick={addbill}>
+						{/* Print button */}
+						<Button className='btn btn-success w-100' onClick={handlePrint}>
 							Print
-						</Button> */}
+						</Button>
 					</div>
+					
+					{/* This is the printable content */}
 					<div
+						ref={printRef} // Attach the ref here
 						style={{ fontSize: '12px', backgroundColor: 'white', color: 'black' }}
 						className='p-3'>
 						<center>
-							<img src={company?.image} style={{height:50,width:100}} alt="" />
+							<img src={company?.image} style={{ height: 50, width: 100 }} alt="" />
 							<h6>{company?.company_name}</h6>
 							<p>
 								{company?.address}
 								<br />
 								{company?.phone}
-
 							</p>
 						</center>
 						<p>
@@ -133,15 +155,15 @@ const CommonRightPanel: FC<ICommonRightPanel> = ({ setOpen, isOpen, orderedItems
 						<hr />
 						
 						<div className='row'>
-								<div className='col-sm-3 mb-3 mb-sm-0'>ITEM</div>
-								<div className='col-sm-3'>QTY</div>
-								<div className='col-sm-3'>PRICE</div>
-								<div className='col-sm-3'>AMOUNT</div>
-							</div>
+							<div className='col-sm-3 mb-3 mb-sm-0'>ITEM</div>
+							<div className='col-sm-3'>QTY</div>
+							<div className='col-sm-3'>PRICE</div>
+							<div className='col-sm-3'>AMOUNT</div>
+						</div>
 						<hr />
 
 						{orderedItems.map(({ name, quentity, price }: any, index: any) => (
-							<div className='row'>
+							<div className='row' key={index}>
 								<div className='col-sm-3 mb-3 mb-sm-0'>{name}</div>
 								<div className='col-sm-3'>{quentity}</div>
 								<div className='col-sm-3'>{price}.00</div>
@@ -179,6 +201,7 @@ const CommonRightPanel: FC<ICommonRightPanel> = ({ setOpen, isOpen, orderedItems
 		</OffCanvas>
 	);
 };
+
 CommonRightPanel.propTypes = {
 	setOpen: PropTypes.func.isRequired,
 	isOpen: PropTypes.bool.isRequired,
